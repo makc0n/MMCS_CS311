@@ -57,7 +57,7 @@ namespace TestLexer
 
         [Test]
         public void TestIntCollectNumber()
-        {
+		{
             IntLexer lInt = new IntLexer("12");
             Assert.IsTrue(lInt.Parse());
             Assert.AreEqual(lInt.parseResult, 12, "Не собирает число 12");

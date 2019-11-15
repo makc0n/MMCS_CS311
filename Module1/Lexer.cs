@@ -58,8 +58,9 @@ namespace Lexer
 
         protected System.Text.StringBuilder intString;
         public int parseResult = 0;
+		
 
-        public IntLexer(string input)
+		public IntLexer(string input)
             : base(input)
         {
             intString = new System.Text.StringBuilder();
@@ -67,16 +68,21 @@ namespace Lexer
 
         public override bool Parse()
         {
-            NextCh();
+			bool negative = false;
+			NextCh();
             if (currentCh == '+' || currentCh == '-')
             {
+				if (currentCh == '-')
+					negative = true;
                 NextCh();
             }
-        
-            if (char.IsDigit(currentCh))
+			
+		
+			if (char.IsDigit(currentCh))
             {
-                NextCh();
-            }
+				parseResult = int.Parse(currentCh.ToString());
+				NextCh();
+			}
             else
             {
                 Error();
@@ -84,8 +90,9 @@ namespace Lexer
 
             while (char.IsDigit(currentCh))
             {
-                NextCh();
-            }
+				parseResult *= 10 + int.Parse(currentCh.ToString());
+				NextCh();
+			}
 
 
             if (currentCharValue != -1)
@@ -93,7 +100,11 @@ namespace Lexer
                 Error();
             }
 
-            return true;
+			if (negative)
+				parseResult *= -1;
+
+
+			return true;
 
         }
     }
@@ -105,7 +116,15 @@ namespace Lexer
     
         public string ParseResult
         {
-            get { return parseResult; }
+			
+
+            get {
+
+				
+
+
+
+				return parseResult; }
         }
     
         public IdentLexer(string input) : base(input)
@@ -114,22 +133,88 @@ namespace Lexer
         }
 
         public override bool Parse()
-        { 
-            throw new NotImplementedException();
+        {
+			NextCh();
+			if (!Char.IsLetter(currentCh) && currentCh != '_')
+			{
+				Error();
+			}
+			
+
+			while (Char.IsLetter(currentCh) || currentCh == '_' || Char.IsDigit(currentCh))
+			{				
+				NextCh();
+			}
+
+			if (currentCharValue != -1)
+			{
+				Error();
+			}
+			
+
+			parseResult = inputString;
+
+			return true;
         }
+
+
        
     }
 
-    public class IntNoZeroLexer : IntLexer
-    {
-        public IntNoZeroLexer(string input)
-            : base(input)
-        {
-        }
+	public class IntNoZeroLexer : IntLexer
+	{
+		public IntNoZeroLexer(string input)
+			: base(input)
+		{
+		}
 
-        public override bool Parse()
-        {
-            throw new NotImplementedException();
+		public override bool Parse()
+		{
+			bool negativeState = false;
+			
+			NextCh();
+
+			if (currentCh == '-' || currentCh == '+' )
+			{
+
+				if (currentCh == '-')
+					negativeState = true;
+				NextCh();			
+				
+			}
+
+			if (currentCh == '0')
+				Error();
+			
+
+
+			if (Char.IsDigit(currentCh))
+			{
+
+				parseResult = parseResult * 10 + currentCh; 
+				NextCh();
+			}
+			else
+			{
+				Error();
+			}
+
+			while (Char.IsDigit(currentCh))
+			{		
+
+				parseResult = parseResult * 10 + currentCh;
+				NextCh();
+			}
+
+			
+
+			if (currentCharValue != -1)
+				Error();
+
+			if (negativeState)
+				parseResult *= -1;
+
+			return true;
         }
     }
 
