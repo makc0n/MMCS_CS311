@@ -728,13 +728,13 @@ yylloc = new LexLocation(tokLin, tokCol, tokELin, tokECol);
 public override void yyerror(string format, params object[] args) // îáðàáîòêà ñèíòàêñè÷åñêèõ îøèáîê
 {
   var ww = args.Skip(1).Cast<string>().ToArray();
-  string errorMsg = string.Format("({0},{1}): Âñòðå÷åíî {2}, à îæèäàëîñü {3}", yyline, yycol, args[0], string.Join(" èëè ", ww));
+  string errorMsg = string.Format("({0},{1}): Встреченно {2}, а ожидалось {3}", yyline, yycol, args[0], string.Join(" или ", ww));
   throw new SyntaxException(errorMsg);
 }
 
 public void LexError()
 {
-	string errorMsg = string.Format("({0},{1}): Íåèçâåñòíûé ñèìâîë {2}", yyline, yycol, yytext);
+	string errorMsg = string.Format("({0},{1}): Неизвестный символ {2}", yyline, yycol, yytext);
     throw new LexException(errorMsg);
 }
 

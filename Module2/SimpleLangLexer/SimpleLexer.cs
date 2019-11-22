@@ -59,7 +59,7 @@ namespace SimpleLexer
 
      public class Lexer
     {
-        private int position;
+        
         private char currentCh;                      // Текущий символ
         public int LexRow, LexCol;                  // Строка-столбец начала лексемы. Конец лексемы = LexCol+LexText.Length
         private int row, col;                        // текущие строка и столбец в файле
@@ -100,6 +100,14 @@ namespace SimpleLexer
             keywordsMap["begin"] = Tok.BEGIN;
             keywordsMap["end"] = Tok.END;
             keywordsMap["cycle"] = Tok.CYCLE;
+            keywordsMap["div"] = Tok.DIV;
+            keywordsMap["mod"] = Tok.MOD;
+            keywordsMap["and"] = Tok.AND;
+            keywordsMap["or"] = Tok.OR;
+            keywordsMap["not"] = Tok.NOT;
+            keywordsMap["notmod"] = Tok.ID;
+            keywordsMap["anddiv"] = Tok.ID;
+            keywordsMap["modor"] = Tok.ID;
         }
 
         public string FinishCurrentLine()
@@ -158,20 +166,14 @@ namespace SimpleLexer
             LexCol = col;
             // Тип лексемы определяется по ее первому символу
             // Для каждой лексемы строится синтаксическая диаграмма
-            if (currentCh == ';')
+            if (char.IsDigit(currentCh))
             {
-                NextCh();
-                LexKind = Tok.SEMICOLON;
-            }
-            else if (currentCh == ':')
-            {
-                NextCh();
-                if (currentCh != '=')
+                while (char.IsDigit(currentCh))
                 {
-                    LexError("= was expected");
+                    NextCh();
                 }
-                NextCh();
-                LexKind = Tok.ASSIGN;
+                LexKind = Tok.INUM;
+                LexValue = int.Parse(LexText);
             }
             else if (char.IsLetter(currentCh))
             {
@@ -188,22 +190,134 @@ namespace SimpleLexer
                     LexKind = Tok.ID;
                 }
             }
-            else if (char.IsDigit(currentCh))
-            {
-                while (char.IsDigit(currentCh))
-                {
-                    NextCh();
-                }
-                LexValue = Int32.Parse(LexText);
-                LexKind = Tok.INUM;
-            }
             else if ((int)currentCh == 0)
             {
                 LexKind = Tok.EOF;
             }
-            else
-            {
-                LexError("Incorrect symbol " + currentCh);
+            else switch (currentCh) {
+                    case ';':{
+                    NextCh();
+                    LexKind = Tok.SEMICOLON;
+                }break;
+                    case ':':{
+                    NextCh();
+                    LexKind = Tok.COLON;
+                    if (currentCh == '=')
+                    {
+                        LexKind = Tok.ASSIGN;
+                        NextCh();
+                    }
+                }break;
+                    case '{':{
+                    NextCh();
+                    while (currentCh != '}' && (int)currentCh != 0)
+                    {
+                        NextCh();
+                    }
+
+                    if ((int)currentCh == 0)
+                    {
+                        LexError("Comment not closed");
+                    }
+
+                    if (currentCh == '}')
+                    {
+                        NextCh();
+                    }
+
+                    NextLexem();
+                }break;
+                    case '-':{
+                    NextCh();
+                    LexKind = Tok.MINUS;
+                    if (currentCh == '=')
+                    {
+                        this.LexKind = Tok.MINUSASSIGN;
+                        NextCh();
+                    }
+                }break;
+                    case '/':{
+                    NextCh();
+                    if (currentCh == '=')
+                    {
+                        this.LexKind = Tok.DIVASSIGN;
+                        NextCh();
+                    }
+                    else if (currentCh == '/')
+                    {
+                        while (currentCh != '\n' && (int)currentCh != 0)
+                        {
+                            NextCh();
+                        }
+                        if (currentCh != '\n')
+                        {
+                            LexKind = Tok.EOF;
+                        }
+                        else
+                        {
+                            NextCh();
+                            NextLexem();
+                        }
+                    }
+                    else
+                    {
+                        LexKind = Tok.DIVISION;
+                    }
+                }break;
+                    case ',':{
+                    NextCh();
+                    LexKind = Tok.COMMA;
+                }break;
+                    case '*':{
+                    NextCh();
+                    LexKind = Tok.MULT;
+                    if (currentCh == '=')
+                    {
+                        this.LexKind = Tok.MULTASSIGN;
+                        NextCh();
+                    }
+                }break;
+                    case '>':{
+                    NextCh();
+                    this.LexKind = Tok.GT;
+                    if (currentCh == '=')
+                    {
+                        this.LexKind = Tok.GEQ;
+                        NextCh();
+                    }
+                }break;
+                    case '<':{
+                    NextCh();
+                    this.LexKind = Tok.LT;
+                    if (currentCh == '=')
+                    {
+                        this.LexKind = Tok.LEQ;
+                        NextCh();
+                    }
+                    else if (currentCh == '>')
+                    {
+                        this.LexKind = Tok.NEQ;
+                        NextCh();
+                    }
+
+                }break;
+                    case '=':{
+                    this.LexKind = Tok.EQ;
+                    NextCh();
+                }break;
+                    case '+':{
+                    NextCh();
+                    this.LexKind = Tok.PLUS;
+                    if (currentCh == '=')
+                    {
+                        this.LexKind = Tok.PLUSASSIGN;
+                        NextCh();
+                    }
+                }break;
+
+                    default:{
+                    LexError("Incorrect symbol " + currentCh);
+                }break;
             }
         }
 

@@ -32,6 +32,11 @@ namespace SimpleLangParser
             if (l.LexKind == Tok.ID || l.LexKind == Tok.INUM)
             {
                 l.NextLexem();
+                if (l.LexKind == Tok.MINUS || l.LexKind == Tok.PLUS)
+                {
+                    l.NextLexem();
+                    Expr();
+                }
             }
             else
             {
@@ -41,13 +46,14 @@ namespace SimpleLangParser
 
         public void Assign() 
         {
-            l.NextLexem();  // пропуск id
+            if(l.LexKind == Tok.ID)
+                l.NextLexem();  // пропуск id
             if (l.LexKind == Tok.ASSIGN)
             {
                 l.NextLexem();
             }
             else {
-                SyntaxError(":= expected");
+                SyntaxError(":= expected aaaaaaaaaaa");
             }
             Expr();
         }
@@ -81,6 +87,11 @@ namespace SimpleLangParser
                         Assign();
                         break;
                     }
+                case Tok.FOR:
+                    {
+                        For() ;
+                        break;
+                    }
                 default:
                     {
                         SyntaxError("Operator expected");
@@ -88,6 +99,36 @@ namespace SimpleLangParser
                     }
             }
         }
+        public void For()
+        {
+            if (l.LexKind != Tok.FOR)
+            {
+                SyntaxError("to expected");
+            }
+            l.NextLexem();// пропуск for
+            Assign();
+            if (l.LexKind != Tok.TO)
+            {
+                SyntaxError("to expected");
+            }
+            l.NextLexem();
+            Expr();
+            if (l.LexKind != Tok.DO)
+            {
+                SyntaxError("do expected");
+            }
+            l.NextLexem();
+            if (l.LexKind == Tok.BEGIN)
+            {
+                Block();
+            }
+            else
+            {
+                Statement();
+            }
+
+        }
+
 
         public void Block() 
         {
