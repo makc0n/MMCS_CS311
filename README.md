@@ -1,3 +1,19 @@
+###Комманды для работы с GitHub`ом
+
+1. Начало работы:
+
+- git clone --recurse-submodules https://github.com/makc0n/MMCS_CS311
+- git config --global user.name "makc0n"
+- git config --global user.email "Makc0n47@gmail.com"
+
+2. Комментирование изменений (коммиты следует называть соответственно тому, что было реализовано):
+
+- Добавить в текущий коммит все изменения: git add .
+- Назвать коммит: git commit -m "Implement Module_X"
+- Отправить коммит в удаленный репозиторий: git push
+
+
+
 ### Как использовать этот репозиторий
 
 git clone --recurse-submodules <репозиторий> 
