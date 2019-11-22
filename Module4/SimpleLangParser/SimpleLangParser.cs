@@ -32,11 +32,8 @@ namespace SimpleLangParser
             if (l.LexKind == Tok.ID || l.LexKind == Tok.INUM)
             {
                 l.NextLexem();
-                if (l.LexKind == Tok.MINUS || l.LexKind == Tok.PLUS)
-                {
-                    l.NextLexem();
-                    Expr();
-                }
+				
+
             }
             else
             {
@@ -46,14 +43,15 @@ namespace SimpleLangParser
 
         public void Assign() 
         {
-            if(l.LexKind == Tok.ID)
-                l.NextLexem();  // пропуск id
+			if (l.LexKind != Tok.ID)
+				SyntaxError("rcatywfdjhasgvdjk");
+            l.NextLexem();  // пропуск id
             if (l.LexKind == Tok.ASSIGN)
             {
                 l.NextLexem();
             }
             else {
-                SyntaxError(":= expected aaaaaaaaaaa");
+                SyntaxError(":= expected ");
             }
             Expr();
         }

@@ -42,41 +42,43 @@ namespace  GeneratedLexer
 
             int tok = 0;
             double sum = 0;
-            do {
-                tok = myScanner.yylex();
+			do
+			{
+				tok = myScanner.yylex();
 
-                if (tok == (int)Tok.EOF)
-                {
-                    break;
-                }
-                else if (tok == (int)Tok.ID)
-                {
-                    string idText = myScanner.yytext;
-                    if (minIdLength > idText.Length)
-                    {
-                        minIdLength = idText.Length;
-                    }
-                    if (maxIdLength < idText.Length)
-                    {
-                        maxIdLength = idText.Length;
-                    }
-                    sum += myScanner.yyleng;
-                    idCount++;
+				if (tok == (int)Tok.EOF)
+				{
+					break;
+				}
+				else if (tok == (int)Tok.ID)
+				{
+					
+					string text = myScanner.yytext;
+					if (minIdLength > text.Length)
+					{
+						minIdLength = text.Length;
+					}
+					if (maxIdLength < text.Length)
+					{
+						maxIdLength = text.Length;
+					}
+					sum += myScanner.yyleng;
+					idCount++;
 
-                }
-                else if (tok == (int)Tok.INUM)
-                {
-                    sumInt += myScanner.LexValueInt;
-                }
-                else if (tok == (int)Tok.RNUM)
-                {
-                    sumDouble += myScanner.LexValueDouble;
-                }
-
-            } while (true);
-            avgIdLength = sum / idCount;
-        }
-    }
+				}
+				else if (tok == (int)Tok.INUM)
+				{
+					sumInt += myScanner.LexValueInt;
+				}
+				else if (tok == (int)Tok.RNUM)
+				{
+					sumDouble += myScanner.LexValueDouble;
+				}
+				
+			} while (true);
+			avgIdLength = sum / idCount;
+		}
+	}
 }
 
 

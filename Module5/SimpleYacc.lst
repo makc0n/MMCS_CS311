@@ -1,11 +1,11 @@
 
 // ==========================================================================
-//  GPPG error listing for yacc source file <SimpleYacc.y>
+//  GPPG error listing for yacc source file <SimpleYacc.y - 22.11.2019 21:07:48>
 // ==========================================================================
-//  Version:  1.3.6
-//  Machine:  SSM
-//  DateTime: 17.08.2014 10:25:15
-//  UserName: Станислав
+//  Version:  1.5.0
+//  Machine:  MIL8A-202A-03
+//  DateTime: 22.11.2019 21:07:53
+//  UserName: user
 // ==========================================================================
 
 
@@ -16,19 +16,13 @@
 
 %output = SimpleYacc.cs
 
-%using System.IO;
-
 %namespace SimpleParser
 
-%token BEGIN END CYCLE INUM RNUM ID ASSIGN SEMICOLON  
+%token BEGIN END CYCLE INUM RNUM ID ASSIGN SEMICOLON FOR DO TO WHILE IF THEN ELSE
 
 %%
-// Error: NonTerminal symbol "st" has no productions
-// Warning: Terminating st fixes the following size-2 NonTerminal set
-   // {cycle, st}
-// Error: There are 2 non-terminating NonTerminal Symbols
-   //  {cycle, st}
-// ------------------------------------------------------------------
+// Warning: NonTerminal symbol "while" is unreachable
+// --------------------------------------------------
 
 progr   : block
 		;
@@ -39,7 +33,10 @@ stlist	: statement
 
 statement: assign
 		| block  
-		| cycle  
+		| cycle 
+		| for
+		| if
+
 		;
 
 ident 	: ID 
@@ -55,10 +52,17 @@ expr	: ident
 block	: BEGIN stlist END 
 		;
 
-cycle	: CYCLE expr st 
+cycle	: CYCLE expr statement 
+		;
+
+for		: FOR assign TO expr DO stlist
+		;
+
+if		: IF expr THEN stlist ELSE stlist
+		;
+while	: WHILE expr DO statement
 		;
 	
 %%
-
 // ==========================================================================
 
