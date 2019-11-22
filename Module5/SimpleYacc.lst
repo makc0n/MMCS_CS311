@@ -1,11 +1,11 @@
 
 // ==========================================================================
-//  GPPG error listing for yacc source file <SimpleYacc.y - 22.11.2019 21:07:48>
+//  GPPG error listing for yacc source file <SimpleYacc.y - 23.11.2019 0:20:42>
 // ==========================================================================
 //  Version:  1.5.0
-//  Machine:  MIL8A-202A-03
-//  DateTime: 22.11.2019 21:07:53
-//  UserName: user
+//  Machine:  DESKTOP-ELLS3S8
+//  DateTime: 23.11.2019 0:20:51
+//  UserName: Makc0
 // ==========================================================================
 
 
@@ -18,11 +18,11 @@
 
 %namespace SimpleParser
 
-%token BEGIN END CYCLE INUM RNUM ID ASSIGN SEMICOLON FOR DO TO WHILE IF THEN ELSE
+%token BEGIN END CYCLE INUM RNUM ID ASSIGN SEMICOLON FOR DO TO WHILE IF THEN ELSE REPEAT VAR UNTIL RIGHT_BRACKET LEFT_BRACKET WRITE PLUS MINUS DIVISION MULT COMMA
 
 %%
-// Warning: NonTerminal symbol "while" is unreachable
-// --------------------------------------------------
+// Warning: NonTerminal symbol "act" is unreachable
+// ------------------------------------------------
 
 progr   : block
 		;
@@ -36,17 +36,36 @@ statement: assign
 		| cycle 
 		| for
 		| if
-
+		| while
+		| repeat
+		| write
+		| var
 		;
 
-ident 	: ID 
+ident 	: ID
+		| ID COMMA ident
 		;
+
 	
 assign 	: ident ASSIGN expr 
 		;
 
-expr	: ident  
+var		: VAR ident
+		;
+
+act		: PLUS
+		| MINUS
+		| MULT
+		| DIVISION
+		;
+
+expr	: ident 
 		| INUM 
+		| LEFT_BRACKET expr RIGHT_BRACKET
+		| expr PLUS expr
+		| expr MINUS expr
+		| expr MULT expr
+		| expr DIVISION expr
 		;
 
 block	: BEGIN stlist END 
@@ -61,6 +80,10 @@ for		: FOR assign TO expr DO stlist
 if		: IF expr THEN stlist ELSE stlist
 		;
 while	: WHILE expr DO statement
+		;
+repeat	:REPEAT stlist UNTIL expr
+		;
+write	: WRITE LEFT_BRACKET expr RIGHT_BRACKET
 		;
 	
 %%
